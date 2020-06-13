@@ -1,22 +1,24 @@
 /*****************************************************************************
  *
- * generateQRCode - QRCode generator (v07/21/2016)
+ *  generateQRCode - QRCode generator - v07/31/2016
  *
- * A simple example of the use of the
- * zxing4p3.generateQRCode() method
+ *  A simple example of the use of the ZXING4P.generateQRCode() method.
  *
- * Enter a message that will be encoded in a QRCode and hit <enter>
+ *  Enter a message that will be encoded in a QRCode and hit <enter>.
  *
- * Press 's' to save the generated image (as a .gif file)
- * Press 'r' to start again
+ *  Press 's' to save the generated image (as a .gif file)
+ *  Press 'r' to start again
  *
- *  (c) 2013-2016 Rolf van Gelder http://cagewebdev.com/ :: http://rvg.cage.nl
+ *  Library page:
+ *  http://cagewebdev.com/zxing4processing-processing-library/
+ *
+ *  (c) 2013-2016 Rolf van Gelder, http://cagewebdev.com, http://rvg.cage.nl
  *
  *****************************************************************************/
 
-// IMPORT THE zxing4p3 LIBRARY + DECLARE A ZXING4P OBJECT
+// IMPORT THE ZXING4PROCESSING LIBRARY AND DECLARE A ZXING4P OBJECT
 import com.cage.zxing4p3.*;
-ZXING4P zxing;
+ZXING4P zxing4p;
 
 PImage  QRCode;
 PFont   font;
@@ -29,14 +31,19 @@ boolean showCursor   = true;
 int     lastTime     = 0;
 
 /*****************************************************************************
+ *
  *  SETUP
+ *
  *****************************************************************************/
 void setup()
 {
-  size(400, 400);
+  size(600, 600);
 
   // ZXING4P ENCODE/DECODER INSTANCE
-  zxing = new ZXING4P();
+  zxing4p = new ZXING4P();
+
+  // SHOW VERSION INFORMATION IN CONSOLE
+  zxing4p.version();
 
   font = loadFont("ArialMT-18.vlw");
   textFont(font, 18);
@@ -44,7 +51,9 @@ void setup()
 
 
 /*****************************************************************************
+ *
  *  DRAW
+ *
  *****************************************************************************/
 void draw()
 {
@@ -53,7 +62,7 @@ void draw()
   if (generated)
   {
     // DISPLAY GENERATED IMAGE
-    image(QRCode, 0, 0);
+    set(0, 0, QRCode);
   } else
   {
     // WAIT FOR USER INPUT
@@ -79,8 +88,21 @@ void draw()
 } // draw()
 
 
+/*****************************************************************************************
+ *
+ * CREATE A TIMESTAMP (YYYYMMDDHHMMSS)
+ * 
+ *****************************************************************************************/
+String timeStamp()
+{
+  return year()+nf(month(), 2)+nf(day(), 2)+nf(hour(), 2)+nf(minute(), 2)+nf(second(), 2);
+} // timeStamp()
+
+
 /*****************************************************************************
+ *
  *  KEYBOARD HANDLER
+ *
  *****************************************************************************/
 void keyPressed() 
 {
@@ -90,8 +112,9 @@ void keyPressed()
     if (key=='s' || key=='S')
     { 
       // SAVE GENERATED IMAGE
-      saveFrame(dataPath("")+"/qrcode.gif");
-      println("QRCode image saved as data/qrcode.gif");
+      String ts = timeStamp();
+      saveFrame(dataPath("")+"/qrcode_"+ts+".gif");
+      println("QRCode image saved as data/qrcode_"+ts+".gif");
     } else if (key=='r' || key=='R')
     { 
       // RESTART
@@ -108,8 +131,7 @@ void keyPressed()
       // width and height is the size of the generated image
       try
       {
-        QRCode = zxing.generateQRCode(textToEncode, width, height);
-        // Work around for bug in Processing 2.1
+        QRCode = zxing4p.generateQRCode(textToEncode, width, height);
         QRCode.save(dataPath("")+"/qrcode_tmp.gif");
         QRCode = loadImage("qrcode_tmp.gif");
       }
@@ -132,7 +154,6 @@ void keyPressed()
       textToEncode = textToEncode + key;
     } else if ((key == BACKSPACE) && (0 < textToEncode.length()))
     {
-      char c = textToEncode.charAt(textToEncode.length() - 1);
       textToEncode = textToEncode.substring(0, textToEncode.length() - 1);
     }
   }
