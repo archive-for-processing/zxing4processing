@@ -1,6 +1,6 @@
 /*************************************************************************************
  *
- *	ZXing4P3: barcode library for Processing v2.x/3.x [v3.3, 04/14/2018]
+ *	ZXing4P3: barcode library for Processing v2.x/3.x [v3.4, 06/20/2018]
  *
  *	http://cagewebdev.com/zxing4processing-processing-library/
  *
@@ -71,6 +71,11 @@ import java.util.ArrayList;
  *	- Added Multi QRCode support<br>
  *	- New mothod: decodeMultipleQRCodes()<br>
  *	- New method: getPositionMarkers(i)<br>
+ *<br> 
+ *	v3.3 :: 04/14/2018<br>
+ *	- Added Multi QRCode support<br>
+ *	- New mothod: decodeMultipleQRCodes()<br>
+ *	- New method: getPositionMarkers(i)<br>
  *<br>
  *	v3.2 :: 07/31/2016<br>
  *	- Removed deprecated method: 'decodeWeb()'<br>
@@ -91,8 +96,8 @@ public class ZXING4P {
 	 *	Properties
 	 *
 	 *********************************************************************************/
-	String thisVersion     = "3.3";
-	String thisReleaseDate = "04/14/2016";
+	String thisVersion     = "3.4";
+	String thisReleaseDate = "06/19/2016";
 	
 	Hashtable<DecodeHintType, Object> hints = new Hashtable<DecodeHintType, Object>(3);;
 	
@@ -108,7 +113,7 @@ public class ZXING4P {
 	PVector[] positionMarkers;
 	
 	// ARRAY LIST WITH THE POSITION MARKERS FOR MULTIPLE QR CODES
-	ArrayList<PVector[]> alMarkers = new ArrayList<PVector[]>();
+	ArrayList<PVector[]> alMarkersZxing4p = new ArrayList<PVector[]>();
 
 	
 	/*********************************************************************************
@@ -204,12 +209,14 @@ public class ZXING4P {
 			
 			// NO QR CODES FOUND
 			if(results.length < 1) {
-				System.out.println("No QR codes found");
+				// System.out.println("No QR codes found"); v3.4
 				return null;
 			} // if(results.length < 1)
 				
 			resList = new ArrayList<String>();
-
+				
+			alMarkersZxing4p.clear();
+				
 			for (int i = 0; i < results.length; i++) {
 				String s = results[i].getText();
 				// PREVENT THE 'GLYPH NOT FOUND' MESSAGE
@@ -218,12 +225,12 @@ public class ZXING4P {
 				
 				// UPDATE THE MARKERS			
 				resultPoints = results[i].getResultPoints();
-				positionMarkers = new PVector[resultPoints.length];
-				
+				PVector[] positionMarkers = new PVector[resultPoints.length];
+			
 				for(int r = 0; r < resultPoints.length; r++)
 					positionMarkers[r] = new PVector (resultPoints[r].getX(), resultPoints[r].getY());
-				
-				alMarkers.add(positionMarkers);
+
+				alMarkersZxing4p.add(positionMarkers);
 			} // for (int i = 0; i < results.length; i++)
 
 			// ARRAYLIST TO SIMPLE ARRAY
@@ -295,7 +302,7 @@ public class ZXING4P {
 	 *
 	 *********************************************************************************/
 	public PVector[] getPositionMarkers(int index) {
-		return alMarkers.get(index);
+		return alMarkersZxing4p.get(index);
 	} // getPositionMarkers()
 
 	
