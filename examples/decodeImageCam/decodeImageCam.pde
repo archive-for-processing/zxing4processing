@@ -1,6 +1,6 @@
 /*****************************************************************************
  *
- *  decodeImageCam - v07/31/2016
+ *  decodeImageCam - v04/14/2018
  *
  *  An example of the use of the ZXING4P.decodeImage() method.
  *
@@ -17,7 +17,7 @@
  *  Library page:
  *  http://cagewebdev.com/zxing4processing-processing-library/
  *
- *  (c) 2013-2016 Rolf van Gelder, http://cagewebdev.com, http://rvg.cage.nl
+ *  (c) 2013-2018 Rolf van Gelder, http://cagewebdev.com, http://rvg.cage.nl
  * 
  *****************************************************************************/
 
@@ -32,7 +32,7 @@ Capture video;
 String decodedText;
 String latestDecodedText = "";
 
-int tw;
+int txtWidth;
 
 
 /*****************************************************************************
@@ -40,8 +40,7 @@ int tw;
  *  SETUP
  *
  *****************************************************************************/
-void setup()
-{
+void setup() {
   size(640, 480);
 
   // LAYOUT
@@ -67,8 +66,7 @@ void setup()
  *  DRAW
  *
  *****************************************************************************/
-void draw()
-{ 
+void draw() { 
   background(0);
 
   // UPDATE CAPTURE
@@ -78,33 +76,30 @@ void draw()
   set(0, 0, video);
 
   // DISPLAY LATEST DECODED TEXT
-  if (!latestDecodedText.equals(""))
-  {
-    tw = int(textWidth(latestDecodedText));
+  if (!latestDecodedText.equals("")) {
+    txtWidth = int(textWidth(latestDecodedText));
     fill(0, 150);
-    rect((width>>1)-(tw>>1)-5, 15, tw+10, 36);
-    fill(255);
+    rect((width>>1) - (txtWidth>>1) - 5, 15, txtWidth + 10, 36);
+    fill(255, 255, 0);
     text(latestDecodedText, width>>1, 43);
-  }
+  } // if (!latestDecodedText.equals(""))
 
   // TRY TO DETECT AND DECODE A QRCODE IN THE VIDEO CAPTURE
   // decodeImage(boolean tryHarder, PImage img)
   // tryHarder: false => fast detection (less accurate)
   //            true  => best detection (little slower)
-  try
-  {  
+  try {  
     decodedText = zxing4p.decodeImage(false, video);
-  }
-  catch (Exception e)
-  {  
-    println("Zxing4processing exception: "+e);
+  } 
+  catch (Exception e) {  
+    //println("Zxing4processing exception: "+e);
     decodedText = "";
-  }
+  } // try
 
-  if (!decodedText.equals(""))
-  { // FOUND A QRCODE!
+  if (!decodedText.equals("")) {
+    // FOUND A QRCODE!
     if (latestDecodedText.equals("") || (!latestDecodedText.equals(decodedText)))
       println("Zxing4processing detected: "+decodedText);
     latestDecodedText = decodedText;
-  }
+  } // if (!decodedText.equals(""))
 } // draw()

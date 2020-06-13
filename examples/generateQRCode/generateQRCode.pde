@@ -1,6 +1,6 @@
 /*****************************************************************************
  *
- *  generateQRCode - QRCode generator - v07/31/2016
+ *  generateQRCode - QRCode generator - v04/14/2018
  *
  *  A simple example of the use of the ZXING4P.generateQRCode() method.
  *
@@ -12,7 +12,7 @@
  *  Library page:
  *  http://cagewebdev.com/zxing4processing-processing-library/
  *
- *  (c) 2013-2016 Rolf van Gelder, http://cagewebdev.com, http://rvg.cage.nl
+ *  (c) 2013-2018 Rolf van Gelder, http://cagewebdev.com, http://rvg.cage.nl
  *
  *****************************************************************************/
 
@@ -35,8 +35,7 @@ int     lastTime     = 0;
  *  SETUP
  *
  *****************************************************************************/
-void setup()
-{
+void setup() {
   size(600, 600);
 
   // ZXING4P ENCODE/DECODER INSTANCE
@@ -55,16 +54,13 @@ void setup()
  *  DRAW
  *
  *****************************************************************************/
-void draw()
-{
+void draw() {
   background(102);
 
-  if (generated)
-  {
+  if (generated) {
     // DISPLAY GENERATED IMAGE
     set(0, 0, QRCode);
-  } else
-  {
+  } else {
     // WAIT FOR USER INPUT
     fill(255);
     text("Type the text for your QRCode and press <enter> to generate the image:", 10, 15, width - 40, height);
@@ -72,8 +68,7 @@ void draw()
 
     // MAKE CURSOR BLINK
     int t = millis();
-    if (t - lastTime > 500)
-    {
+    if (t - lastTime > 500) {
       showCursor = !showCursor;
       lastTime = t;
     }
@@ -93,8 +88,7 @@ void draw()
  * CREATE A TIMESTAMP (YYYYMMDDHHMMSS)
  * 
  *****************************************************************************************/
-String timeStamp()
-{
+String timeStamp() {
   return year()+nf(month(), 2)+nf(day(), 2)+nf(hour(), 2)+nf(minute(), 2)+nf(second(), 2);
 } // timeStamp()
 
@@ -104,56 +98,45 @@ String timeStamp()
  *  KEYBOARD HANDLER
  *
  *****************************************************************************/
-void keyPressed() 
-{
-  if (generated)
-  { 
+void keyPressed() {
+  if (generated) { 
     // IMAGE HAS BEEN GENERATED
-    if (key=='s' || key=='S')
-    { 
+    if (key=='s' || key=='S') { 
       // SAVE GENERATED IMAGE
       String ts = timeStamp();
       saveFrame(dataPath("")+"/qrcode_"+ts+".gif");
       println("QRCode image saved as data/qrcode_"+ts+".gif");
-    } else if (key=='r' || key=='R')
-    { 
+    } else if (key=='r' || key=='R') { 
       // RESTART
       generated = false;
       textToEncode = "";
     }
-  } else
-  { 
+  } else { 
     // WAITING FOR USER INPUT
-    if ((key == ENTER) || (key == RETURN)) 
-    {
+    if ((key == ENTER) || (key == RETURN)) {
       // ENCODE THE TEXT INTO A QRCODE IMAGE
       // PImage p = ZXING4P.generateQRCode(String txt,int width,int height)
       // width and height is the size of the generated image
-      try
-      {
+      try {
         QRCode = zxing4p.generateQRCode(textToEncode, width, height);
         QRCode.save(dataPath("")+"/qrcode_tmp.gif");
         QRCode = loadImage("qrcode_tmp.gif");
-      }
-      catch (Exception e)
-      {  
+      } 
+      catch (Exception e) {  
         println("Exception: "+e);
         QRCode = null;
       }
 
-      if (firstTime)
-      {
+      if (firstTime) {
         println("Press 's' to save the image to disk");
         println("Press 'r' to start again");
       }
       generated = true;      
       firstTime = false;
-    } else if ((key > 31) && (key != CODED)) 
-    {
+    } else if ((key > 31) && (key != CODED)) {
       // REGULAR CHARACTER: ADD TO STRING
       textToEncode = textToEncode + key;
-    } else if ((key == BACKSPACE) && (0 < textToEncode.length()))
-    {
+    } else if ((key == BACKSPACE) && (0 < textToEncode.length())) {
       textToEncode = textToEncode.substring(0, textToEncode.length() - 1);
     }
   }
